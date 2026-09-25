@@ -117,8 +117,10 @@ export default function RootLayout({
       suppressHydrationWarning
       className={cn("h-full", "antialiased", fontSans.variable, fontMono.variable, "font-sans")}
     >
-      <Analytics/>
-      <body className="min-h-full flex flex-col bg-background text-foreground selection:bg-blue-500/20 selection:text-blue-600 dark:selection:text-blue-400">
+      <body
+        suppressHydrationWarning
+        className="min-h-full flex flex-col bg-background text-foreground selection:bg-blue-500/20 selection:text-blue-600 dark:selection:text-blue-400"
+      >
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -129,6 +131,7 @@ export default function RootLayout({
             {children}
           </ToastProvider>
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );

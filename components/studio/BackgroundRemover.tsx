@@ -8,18 +8,21 @@ import { ImageComparison } from "@/components/studio/ImageComparison";
 import { BackgroundReplacer } from "@/components/studio/BackgroundReplacer";
 import { OptimizedImageResult, formatBytes } from "@/lib/image-utils";
 import { Badge } from "@/components/ui/badge";
-import { Sparkles, ShieldCheck } from "lucide-react";
+import { Sparkles, ShieldCheck, ChevronDown, ChevronUp, Lock, Cpu, HardDrive } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export function BackgroundRemover() {
   const [selectedImage, setSelectedImage] = React.useState<OptimizedImageResult | null>(null);
   const [processedBlob, setProcessedBlob] = React.useState<Blob | null>(null);
   const [processedUrl, setProcessedUrl] = React.useState<string | null>(null);
   const [isProcessing, setIsProcessing] = React.useState(false);
+  const [showPrivacyInfo, setShowPrivacyInfo] = React.useState(false);
   const [progress, setProgress] = React.useState<ProcessingProgress>({
     stage: "init",
     percentage: 0,
     message: "Initializing engine...",
   });
+
   const abortControllerRef = React.useRef<boolean>(false);
   const { toast } = useToast();
 
@@ -190,24 +193,78 @@ export function BackgroundRemover() {
       {selectedImage && !isProcessing && processedBlob && processedUrl && (
         <div className="w-full flex flex-col items-center gap-10">
           {/* Top Status Bar with Resolution and privacy info */}
-          <div className="w-full max-w-4xl flex items-center justify-between flex-wrap gap-2 px-1">
-            <div className="flex items-center gap-2">
-              <Badge variant="success" className="py-1 px-3 gap-1.5 font-medium">
-                <Sparkles className="w-3.5 h-3.5" />
-                Done (In-Browser ML)
-              </Badge>
-              <Badge variant="outline" className="text-xs font-mono bg-muted/30 border-border/80">
-                Output: {selectedImage.width} × {selectedImage.height} px
-              </Badge>
+          <div className="w-full max-w-4xl flex flex-col gap-2.5 px-1">
+            <div className="w-full flex items-center justify-between flex-wrap gap-2">
+              <div className="flex items-center gap-2">
+                <Badge variant="success" className="py-1 px-3 gap-1.5 font-medium">
+                  <Sparkles className="w-3.5 h-3.5" />
+                  Done (In-Browser ML)
+                </Badge>
+                <Badge variant="outline" className="text-xs font-mono bg-muted/30 border-border/80">
+                  Output: {selectedImage.width} × {selectedImage.height} px
+                </Badge>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setShowPrivacyInfo(!showPrivacyInfo)}
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-emerald-500/30 bg-emerald-500/5 hover:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-medium transition-colors cursor-pointer"
+                title="Click to inspect client-side privacy guarantee"
+              >
+                <ShieldCheck className="w-3.5 h-3.5" />
+                <span>0 Bytes Sent to Server</span>
+                {showPrivacyInfo ? (
+                  <ChevronUp className="w-3 h-3 ml-0.5 opacity-70" />
+                ) : (
+                  <ChevronDown className="w-3 h-3 ml-0.5 opacity-70" />
+                )}
+              </button>
             </div>
 
-            <div className="flex items-center gap-2">
-              <Badge variant="outline" className="text-[11px] text-muted-foreground gap-1 bg-muted/20 border-border/80">
-                <ShieldCheck className="w-3 h-3 text-emerald-500" />
-                0 Bytes Sent to Server
-              </Badge>
-            </div>
+            {/* Expandable Privacy Architecture Details */}
+            <AnimatePresence>
+              {showPrivacyInfo && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="overflow-hidden"
+                >
+                  <div className="p-4 rounded-2xl border border-emerald-500/20 bg-emerald-500/5 backdrop-blur-xs text-xs grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div className="flex items-start gap-2">
+                      <Cpu className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+                      <div>
+                        <strong className="text-foreground block font-semibold">100% Client-Side</strong>
+                        <span className="text-muted-foreground leading-relaxed">
+                          Inference executes in WebAssembly on your device&apos;s CPU/GPU.
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <Lock className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+                      <div>
+                        <strong className="text-foreground block font-semibold">Zero Remote Storage</strong>
+                        <span className="text-muted-foreground leading-relaxed">
+                          No images or metadata are ever transmitted or uploaded anywhere.
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <HardDrive className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+                      <div>
+                        <strong className="text-foreground block font-semibold">Offline IndexedDB</strong>
+                        <span className="text-muted-foreground leading-relaxed">
+                          Neural network weights stay stored locally in your browser.
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
+
 
           {/* Before / After Comparison */}
           <div className="w-full max-w-4xl flex flex-col gap-3">

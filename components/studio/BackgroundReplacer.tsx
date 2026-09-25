@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Download,
   Copy,
@@ -10,18 +10,26 @@ import {
   Palette,
   Check,
   CheckCircle2,
+  FileDown,
+  Info,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/components/ui/toast";
 import {
   BackgroundConfig,
-  compositeBackground,
   copyImageBlobToClipboard,
   downloadBlob,
+  exportImageBlob,
+  formatBytes,
 } from "@/lib/image-utils";
-import { COLOR_PRESETS, GRADIENT_PRESETS } from "@/lib/constants";
-import { ChangeEvent, useRef, useState } from "react";
+import {
+  COLOR_PRESETS,
+  GRADIENT_PRESETS,
+  EXPORT_FORMATS,
+  ExportImageFormat,
+} from "@/lib/constants";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 
 interface BackgroundReplacerProps {
   processedBlob: Blob;
@@ -42,10 +50,117 @@ export function BackgroundReplacer({
     type: "transparent",
   });
   const [customColor, setCustomColor] = useState("#ffffff");
+  const [selectedFormat, setSelectedFormat] = useState<ExportImageFormat>("png");
+  const [quality, setQuality] = useState<number>(0.92);
+  const [jpegBgColor, setJpegBgColor] = useState<string>("#ffffff");
   const [isExporting, setIsExporting] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
+  const [downloadSize, setDownloadSize] = useState<number | null>(() => processedBlob.size);
+  const [formatSizes, setFormatSizes] = useState<Partial<Record<ExportImageFormat, number>>>(() => ({
+    png: processedBlob.size,
+  }));
+  const [isCalculatingSize, setIsCalculatingSize] = useState(false);
+  const [lastExportInfo, setLastExportInfo] = useState<{
+    format: string;
+    sizeBytes: number;
+    filename: string;
+  } | null>(null);
+
   const bgFileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+
+  const activeFormatConfig =
+    EXPORT_FORMATS.find((f) => f.id === selectedFormat) || EXPORT_FORMATS[0];
+
+  // Calculate download size for selected format & options
+  useEffect(() => {
+    let isMounted = true;
+
+    if (selectedFormat === "png" && bgConfig.type === "transparent") {
+      const timer = setTimeout(() => {
+        if (isMounted) {
+          setDownloadSize(processedBlob.size);
+          setFormatSizes((prev) => ({ ...prev, png: processedBlob.size }));
+        }
+      }, 0);
+      return () => {
+        isMounted = false;
+        clearTimeout(timer);
+      };
+    }
+
+    const timer = setTimeout(async () => {
+      if (!isMounted) return;
+      setIsCalculatingSize(true);
+      try {
+        const res = await exportImageBlob(
+          processedBlob,
+          bgConfig,
+          {
+            format: selectedFormat,
+            quality,
+            jpegBackground: jpegBgColor,
+          },
+          originalWidth,
+          originalHeight
+        );
+        if (isMounted) {
+          setDownloadSize(res.sizeBytes);
+          setFormatSizes((prev) => ({ ...prev, [selectedFormat]: res.sizeBytes }));
+        }
+      } catch {
+        // ignore size calculation error
+      } finally {
+        if (isMounted) {
+          setIsCalculatingSize(false);
+        }
+      }
+    }, 80);
+
+    return () => {
+      isMounted = false;
+      clearTimeout(timer);
+    };
+  }, [processedBlob, bgConfig, selectedFormat, quality, jpegBgColor, originalWidth, originalHeight]);
+
+  // Pre-estimate sizes across all export formats for quick comparison
+  useEffect(() => {
+    let isMounted = true;
+
+    const computeAll = async () => {
+      for (const fmt of EXPORT_FORMATS) {
+        if (!isMounted) break;
+        if (fmt.id === "png" && bgConfig.type === "transparent") {
+          setFormatSizes((prev) => ({ ...prev, png: processedBlob.size }));
+          continue;
+        }
+        try {
+          const res = await exportImageBlob(
+            processedBlob,
+            bgConfig,
+            {
+              format: fmt.id,
+              quality: fmt.id === selectedFormat ? quality : 0.92,
+              jpegBackground: jpegBgColor,
+            },
+            originalWidth,
+            originalHeight
+          );
+          if (isMounted) {
+            setFormatSizes((prev) => ({ ...prev, [fmt.id]: res.sizeBytes }));
+          }
+        } catch {
+          // ignore background estimation error
+        }
+      }
+    };
+
+    const timer = setTimeout(computeAll, 200);
+    return () => {
+      isMounted = false;
+      clearTimeout(timer);
+    };
+  }, [processedBlob, bgConfig, jpegBgColor, originalWidth, originalHeight, quality, selectedFormat]);
 
   // Handle custom background image upload
   const handleCustomBgUpload = (e: ChangeEvent<HTMLInputElement>) => {
@@ -64,29 +179,41 @@ export function BackgroundReplacer({
     }
   };
 
-  // Download high-resolution PNG
+  // Download high-resolution image in selected format
   const handleDownload = async () => {
     setIsExporting(true);
     try {
-      let finalBlob = processedBlob;
-      if (bgConfig.type !== "transparent") {
-        finalBlob = await compositeBackground(
-          processedBlob,
-          bgConfig,
-          originalWidth,
-          originalHeight
-        );
-      }
-      downloadBlob(finalBlob, `clearcut-${Date.now()}.png`);
+      const exportResult = await exportImageBlob(
+        processedBlob,
+        bgConfig,
+        {
+          format: selectedFormat,
+          quality,
+          jpegBackground: jpegBgColor,
+        },
+        originalWidth,
+        originalHeight
+      );
+
+      downloadBlob(exportResult.blob, exportResult.filename);
+
+      setLastExportInfo({
+        format: exportResult.format.toUpperCase(),
+        sizeBytes: exportResult.sizeBytes,
+        filename: exportResult.filename,
+      });
+
       toast({
-        title: "Download Started",
-        description: `Exported ${originalWidth}×${originalHeight}px PNG.`,
+        title: `Exported ${exportResult.format.toUpperCase()}`,
+        description: `Saved as ${exportResult.filename} (${formatBytes(exportResult.sizeBytes)}).`,
         type: "success",
       });
-    } catch {
+    } catch (err: unknown) {
+      console.error("Export error:", err);
+      const errMsg = err instanceof Error ? err.message : "Could not export image.";
       toast({
-        title: "Download Error",
-        description: "Could not export image.",
+        title: "Export Error",
+        description: errMsg,
         type: "error",
       });
     } finally {
@@ -94,23 +221,25 @@ export function BackgroundReplacer({
     }
   };
 
-  // Copy to clipboard
+  // Copy to clipboard (PNG standard)
   const handleCopyClipboard = async () => {
     try {
       let finalBlob = processedBlob;
       if (bgConfig.type !== "transparent") {
-        finalBlob = await compositeBackground(
+        const result = await exportImageBlob(
           processedBlob,
           bgConfig,
+          { format: "png" },
           originalWidth,
           originalHeight
         );
+        finalBlob = result.blob;
       }
       await copyImageBlobToClipboard(finalBlob);
       setIsCopied(true);
       toast({
         title: "Copied to Clipboard",
-        description: "Image is ready to paste into Figma, Slack, or Canva.",
+        description: "Image copied as PNG. Ready to paste in Figma, Slack, or Canva.",
         type: "success",
       });
       setTimeout(() => setIsCopied(false), 2500);
@@ -130,7 +259,7 @@ export function BackgroundReplacer({
       transition={{ duration: 0.3 }}
       className="w-full max-w-4xl mx-auto flex flex-col gap-6"
     >
-      {/* Studio Canvas Preview */}
+      {/* 1. Studio Canvas Preview */}
       <div className="w-full flex flex-col items-center">
         <div
           className={`relative w-full aspect-square sm:aspect-4/3 rounded-3xl overflow-hidden border border-border shadow-md flex items-center justify-center ${
@@ -167,28 +296,35 @@ export function BackgroundReplacer({
           />
 
           {/* Resolution Badge */}
-          <div className="absolute top-3 right-3 pointer-events-none">
-            <span className="text-[11px] font-mono font-medium px-2 py-1 rounded bg-black/60 backdrop-blur-md text-zinc-200 border border-white/10 shadow-xs">
+          <div className="absolute top-3 right-3 pointer-events-none flex items-center gap-2">
+            <span className="text-[11px] font-mono font-medium px-2.5 py-1 rounded-full bg-black/70 backdrop-blur-md text-zinc-200 border border-white/10 shadow-xs">
               {originalWidth} × {originalHeight} px
+            </span>
+          </div>
+
+          {/* Format Indicator Badge */}
+          <div className="absolute top-3 left-3 pointer-events-none">
+            <span className="text-[11px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full bg-blue-600/80 backdrop-blur-md text-white border border-blue-400/20 shadow-xs">
+              {selectedFormat.toUpperCase()}
             </span>
           </div>
         </div>
       </div>
 
-      {/* Background Replacement Customizer Controls */}
+      {/* 2. Backdrop Customizer */}
       <Card className="p-4 sm:p-6 rounded-3xl border border-border bg-card shadow-xs flex flex-col gap-5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Palette className="w-4 h-4 text-blue-500" />
             <h4 className="text-sm font-semibold text-foreground">
-              Backdrop & Replacement
+              Studio Backdrop
             </h4>
           </div>
           <span className="text-xs text-muted-foreground capitalize">
             {bgConfig.type === "transparent"
-              ? "Transparent PNG"
+              ? "Transparent Alpha"
               : bgConfig.type === "color"
-              ? `Solid (${bgConfig.color})`
+              ? `Solid Color (${bgConfig.color})`
               : bgConfig.type === "gradient"
               ? "Studio Gradient"
               : "Custom Image"}
@@ -312,7 +448,165 @@ export function BackgroundReplacer({
         </div>
       </Card>
 
-      {/* Main Action Bar */}
+      {/* 3. Multi-Format Export Options */}
+      <Card className="p-4 sm:p-6 rounded-3xl border border-border bg-card shadow-xs flex flex-col gap-5">
+        <div className="flex items-center justify-between flex-wrap gap-2">
+          <div className="flex items-center gap-2">
+            <FileDown className="w-4 h-4 text-blue-500" />
+            <h4 className="text-sm font-semibold text-foreground">
+              Export Format
+            </h4>
+          </div>
+          <span className="text-xs text-muted-foreground">
+            Processed 100% locally in your browser
+          </span>
+        </div>
+
+        {/* Format Selectors */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          {EXPORT_FORMATS.map((fmt) => {
+            const isSelected = selectedFormat === fmt.id;
+            const formatSize = formatSizes[fmt.id];
+            return (
+              <button
+                key={fmt.id}
+                type="button"
+                onClick={() => setSelectedFormat(fmt.id)}
+                className={`relative flex flex-col items-start p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${
+                  isSelected
+                    ? "border-blue-500 bg-blue-500/5 dark:bg-blue-500/10 ring-2 ring-blue-500/40 shadow-xs"
+                    : "border-border/80 hover:border-zinc-300 dark:hover:border-zinc-700 bg-card hover:bg-muted/30"
+                }`}
+              >
+                <div className="w-full flex items-center justify-between mb-1">
+                  <span className="text-sm font-bold text-foreground">
+                    {fmt.name}
+                  </span>
+                  <span
+                    className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
+                      isSelected
+                        ? "bg-blue-500 text-white"
+                        : "bg-muted text-muted-foreground"
+                    }`}
+                  >
+                    {fmt.badge}
+                  </span>
+                </div>
+                <span className="text-[11px] font-medium text-foreground/80 line-clamp-1">
+                  {fmt.tag}
+                </span>
+                <div className="w-full flex items-center justify-between mt-2 pt-1.5 border-t border-border/40 text-[10px]">
+                  <span className="text-muted-foreground font-mono">
+                    .{fmt.extension}
+                  </span>
+                  {formatSize ? (
+                    <span
+                      className={`font-semibold font-mono ${
+                        isSelected
+                          ? "text-blue-600 dark:text-blue-400"
+                          : "text-foreground/80"
+                      }`}
+                    >
+                      {formatBytes(formatSize)}
+                    </span>
+                  ) : isCalculatingSize && isSelected ? (
+                    <span className="text-muted-foreground animate-pulse">
+                      ...
+                    </span>
+                  ) : null}
+                </div>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Selected Format Contextual Options & Download Size */}
+        <div className="p-3 rounded-2xl bg-muted/30 border border-border/80 flex flex-col gap-2.5">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="flex items-center gap-2 text-xs">
+              <Info className="w-3.5 h-3.5 text-blue-500 shrink-0" />
+              <span className="text-foreground font-medium">
+                {activeFormatConfig.description}
+              </span>
+              <span className="text-muted-foreground/50 hidden sm:inline">•</span>
+              <span className="text-muted-foreground hidden sm:inline">
+                {activeFormatConfig.idealFor}
+              </span>
+            </div>
+
+            {/* Live Download Size Badge */}
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400 text-xs font-medium">
+              <span className="text-muted-foreground">Download size:</span>
+              <span className="font-semibold font-mono">
+                {downloadSize !== null
+                  ? formatBytes(downloadSize)
+                  : isCalculatingSize
+                  ? "Calculating..."
+                  : "—"}
+              </span>
+            </div>
+          </div>
+
+          {/* Quality Slider / Presets for WebP, JPEG, AVIF */}
+          {selectedFormat !== "png" && (
+            <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-border/60">
+              <span className="text-xs font-medium text-foreground">
+                Compression Quality
+              </span>
+              <div className="flex items-center gap-1.5">
+                {[
+                  { label: "Standard (80%)", val: 0.8 },
+                  { label: "High (92%)", val: 0.92 },
+                  { label: "Max (100%)", val: 1.0 },
+                ].map((opt) => (
+                  <button
+                    key={opt.val}
+                    type="button"
+                    onClick={() => setQuality(opt.val)}
+                    className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all cursor-pointer ${
+                      quality === opt.val
+                        ? "bg-blue-600 text-white shadow-xs"
+                        : "bg-muted hover:bg-muted/80 text-muted-foreground"
+                    }`}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Smart JPEG Backdrop Alert */}
+          {selectedFormat === "jpeg" && bgConfig.type === "transparent" && (
+            <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-border/60">
+              <span className="text-[11px] text-muted-foreground">
+                JPEG has no alpha channel. Backdrop color:
+              </span>
+              <div className="flex items-center gap-1.5">
+                {[
+                  { label: "Studio White", color: "#ffffff" },
+                  { label: "Studio Dark", color: "#09090b" },
+                ].map((c) => (
+                  <button
+                    key={c.color}
+                    type="button"
+                    onClick={() => setJpegBgColor(c.color)}
+                    className={`px-2 py-0.5 rounded-md text-[11px] font-medium border transition-all cursor-pointer ${
+                      jpegBgColor === c.color
+                        ? "border-blue-500 bg-blue-500/10 text-blue-600 dark:text-blue-400 font-semibold"
+                        : "border-border text-muted-foreground hover:bg-muted"
+                    }`}
+                  >
+                    {c.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </Card>
+
+      {/* 4. Main Action Bar */}
       <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
         <Button
           variant="outline"
@@ -330,6 +624,7 @@ export function BackgroundReplacer({
             size="lg"
             onClick={handleCopyClipboard}
             className="gap-2 cursor-pointer rounded-2xl font-medium"
+            title="Copies PNG image to system clipboard"
           >
             {isCopied ? (
               <CheckCircle2 className="w-4 h-4 text-emerald-500" />
@@ -344,13 +639,49 @@ export function BackgroundReplacer({
             size="lg"
             onClick={handleDownload}
             disabled={isExporting}
-            className="gap-2 cursor-pointer rounded-2xl font-semibold shadow-md"
+            className="gap-2 cursor-pointer rounded-2xl font-semibold shadow-md min-w-[190px]"
           >
-            <Download className="w-4 h-4" />
-            <span>{isExporting ? "Exporting..." : "Download Full PNG"}</span>
+            {isExporting ? (
+              <>
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+                  className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full"
+                />
+                <span>Exporting...</span>
+              </>
+            ) : (
+              <>
+                <Download className="w-4 h-4" />
+                <span>
+                  Download {selectedFormat.toUpperCase()}
+                  {downloadSize ? ` (${formatBytes(downloadSize)})` : ""}
+                </span>
+              </>
+            )}
           </Button>
         </div>
       </div>
+
+      {/* Last export confirmation chip */}
+      <AnimatePresence>
+        {lastExportInfo && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="w-full flex items-center justify-center pt-1"
+          >
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs">
+              <Check className="w-3.5 h-3.5" />
+              <span>
+                Downloaded <strong>{lastExportInfo.filename}</strong> (
+                {formatBytes(lastExportInfo.sizeBytes)})
+              </span>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }

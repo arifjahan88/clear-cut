@@ -39,7 +39,7 @@ const FEATURES = [
     bullets: [
       "Interactive Before / After split comparison",
       "Solid, gradient, and custom image backdrops",
-      "1-click copy to clipboard for Figma & Canva",
+      "Multi-format export: PNG, WEBP, JPEG, AVIF",
     ],
   },
 ];

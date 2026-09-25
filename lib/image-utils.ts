@@ -5,6 +5,7 @@
 
 import {
   ALLOWED_MIME_TYPES,
+  ExportImageFormat,
   MAX_UPLOAD_FILE_SIZE_BYTES,
   SOFT_SIZE_WARNING_BYTES,
   STANDARD_MAX_DIMENSION,
@@ -207,16 +208,34 @@ export async function optimizeToStandardSize(
   };
 }
 
+export interface ExportOptions {
+  format: ExportImageFormat;
+  quality?: number; // 0.1 to 1.0 (default 0.95 for webp/jpeg/avif)
+  jpegBackground?: string; // Default "#ffffff" if transparent
+  filenamePrefix?: string;
+}
+
+export interface ExportResult {
+  blob: Blob;
+  filename: string;
+  mimeType: string;
+  sizeBytes: number;
+  width: number;
+  height: number;
+  format: ExportImageFormat;
+}
+
 /**
- * Composite the transparent foreground cutout onto a desired background
- * (solid color, gradient, or custom background image)
+ * Export foreground cutout composited with backdrop in multiple formats (PNG, WEBP, JPEG, AVIF)
+ * 100% Client-Side using HTML5 Canvas.
  */
-export async function compositeBackground(
+export async function exportImageBlob(
   foregroundBlobOrUrl: Blob | string,
   background: BackgroundConfig,
+  options: ExportOptions = { format: "png" },
   targetWidth?: number,
   targetHeight?: number
-): Promise<Blob> {
+): Promise<ExportResult> {
   const fgImg = await loadImageElement(foregroundBlobOrUrl);
   const width = targetWidth || fgImg.naturalWidth || fgImg.width;
   const height = targetHeight || fgImg.naturalHeight || fgImg.height;
@@ -224,11 +243,17 @@ export async function compositeBackground(
   const canvas = document.createElement("canvas");
   canvas.width = width;
   canvas.height = height;
-  const ctx = canvas.getContext("2d");
+  const ctx = canvas.getContext("2d", { willReadFrequently: false });
 
   if (!ctx) {
     throw new Error("Unable to create canvas 2D context for compositing.");
   }
+
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = "high";
+
+  const isJpeg = options.format === "jpeg";
+  const quality = options.quality ?? 0.95;
 
   // 1. Draw Background
   if (background.type === "color" && background.color) {
@@ -267,22 +292,108 @@ export async function compositeBackground(
     const offsetX = (width - bgW) / 2;
     const offsetY = (height - bgH) / 2;
     ctx.drawImage(bgImg, offsetX, offsetY, bgW, bgH);
+  } else if (isJpeg && background.type === "transparent") {
+    // When exporting transparent cutout as JPEG, fill with clean studio white (or custom background)
+    // to avoid the black box artifact of transparent canvases
+    ctx.fillStyle = options.jpegBackground || "#ffffff";
+    ctx.fillRect(0, 0, width, height);
   }
 
   // 2. Draw Foreground on top
   ctx.drawImage(fgImg, 0, 0, width, height);
 
-  return new Promise((resolve, reject) => {
-    canvas.toBlob(
-      (blob) => {
-        if (blob) resolve(blob);
-        else reject(new Error("Failed to export composited canvas to PNG."));
-      },
-      "image/png",
-      1.0
-    );
+  // 3. Determine MIME type and extension
+  let mimeType: string = "image/png";
+  let extension: string = "png";
+  let blobQuality: number | undefined = undefined;
+
+  switch (options.format) {
+    case "webp":
+      mimeType = "image/webp";
+      extension = "webp";
+      blobQuality = quality;
+      break;
+    case "jpeg":
+      mimeType = "image/jpeg";
+      extension = "jpg";
+      blobQuality = quality;
+      break;
+    case "avif":
+      mimeType = "image/avif";
+      extension = "avif";
+      blobQuality = quality;
+      break;
+    case "png":
+    default:
+      mimeType = "image/png";
+      extension = "png";
+      blobQuality = 1.0;
+      break;
+  }
+
+  // 4. Convert canvas to Blob
+  let exportedBlob = await new Promise<Blob | null>((resolve) => {
+    try {
+      canvas.toBlob((b) => resolve(b), mimeType, blobQuality);
+    } catch {
+      resolve(null);
+    }
   });
+
+  // Handle AVIF fallback in case browser does not support canvas.toBlob("image/avif")
+  let effectiveFormat = options.format;
+  if (!exportedBlob || (options.format === "avif" && exportedBlob.type !== "image/avif")) {
+    if (options.format === "avif") {
+      // Fallback to high-quality WebP
+      mimeType = "image/webp";
+      extension = "webp";
+      effectiveFormat = "webp";
+      exportedBlob = await new Promise<Blob>((resolve, reject) => {
+        canvas.toBlob(
+          (b) => (b ? resolve(b) : reject(new Error("Image export failed."))),
+          "image/webp",
+          quality
+        );
+      });
+    } else {
+      throw new Error(`Failed to export image in ${options.format.toUpperCase()} format.`);
+    }
+  }
+
+  const prefix = options.filenamePrefix || "clearcut";
+  const filename = `${prefix}-${Date.now()}.${extension}`;
+
+  return {
+    blob: exportedBlob,
+    filename,
+    mimeType,
+    sizeBytes: exportedBlob.size,
+    width,
+    height,
+    format: effectiveFormat,
+  };
 }
+
+/**
+ * Composite the transparent foreground cutout onto a desired background
+ * (solid color, gradient, or custom background image)
+ */
+export async function compositeBackground(
+  foregroundBlobOrUrl: Blob | string,
+  background: BackgroundConfig,
+  targetWidth?: number,
+  targetHeight?: number
+): Promise<Blob> {
+  const result = await exportImageBlob(
+    foregroundBlobOrUrl,
+    background,
+    { format: "png" },
+    targetWidth,
+    targetHeight
+  );
+  return result.blob;
+}
+
 
 /**
  * Copy image blob directly to user's system clipboard (PNG ClipboardItem)

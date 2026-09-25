@@ -74,6 +74,68 @@ export const GRADIENT_PRESETS = [
   },
 ];
 
+// Curated export formats
+export type ExportImageFormat = "png" | "webp" | "jpeg" | "avif";
+
+export interface ExportFormatConfig {
+  id: ExportImageFormat;
+  extension: string;
+  mimeType: string;
+  name: string;
+  tag: string;
+  badge: string;
+  supportsTransparency: boolean;
+  description: string;
+  idealFor: string;
+}
+
+export const EXPORT_FORMATS: ExportFormatConfig[] = [
+  {
+    id: "png",
+    extension: "png",
+    mimeType: "image/png",
+    name: "PNG",
+    tag: "Lossless Alpha",
+    badge: "Transparent",
+    supportsTransparency: true,
+    description: "Lossless quality with transparent background.",
+    idealFor: "Design & editing cutouts",
+  },
+  {
+    id: "webp",
+    extension: "webp",
+    mimeType: "image/webp",
+    name: "WebP",
+    tag: "Web Optimized",
+    badge: "Ultra Light",
+    supportsTransparency: true,
+    description: "Ultra-small size with transparency preserved.",
+    idealFor: "Websites & apps",
+  },
+  {
+    id: "jpeg",
+    extension: "jpg",
+    mimeType: "image/jpeg",
+    name: "JPEG",
+    tag: "Clean Backdrop",
+    badge: "Universal",
+    supportsTransparency: false,
+    description: "Standard photo format with solid backdrop.",
+    idealFor: "Marketplaces & print",
+  },
+  {
+    id: "avif",
+    extension: "avif",
+    mimeType: "image/avif",
+    name: "AVIF",
+    tag: "Next-Gen",
+    badge: "Max Savings",
+    supportsTransparency: true,
+    description: "Next-gen maximum compression & HDR fidelity.",
+    idealFor: "Modern high-speed web",
+  },
+];
+
 // FAQ items
 export const FAQ_ITEMS = [
   {
@@ -104,6 +166,7 @@ export const FAQ_ITEMS = [
     id: "faq-5",
     question: "Are there any usage limits, watermarks, or subscriptions?",
     answer:
-      "None. ClearCut is completely free to use directly in your browser with zero watermarks, zero subscriptions, and full-resolution PNG exports.",
+      "None. ClearCut is completely free to use directly in your browser with zero watermarks, zero subscriptions, and multi-format exports in PNG, WEBP, JPEG, and AVIF.",
   },
 ];
+
