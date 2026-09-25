@@ -231,10 +231,7 @@ export function UploadZone({ onImageSelected, isProcessing = false }: UploadZone
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-500 mr-1" />
             100% In-Browser Privacy
           </Badge>
-          <Badge variant="outline" className="text-[11px] py-1 px-2.5 font-medium bg-background/50 border-border/80">
-            <Sparkles className="w-3.5 h-3.5 text-indigo-500 mr-1" />
-            ISNet Neural ML
-          </Badge>
+         
           <Badge variant="outline" className="text-[11px] py-1 px-2.5 font-mono text-zinc-500 bg-background/50 hidden sm:inline-flex border-border/80">
             ⌘V / Ctrl+V to paste
           </Badge>
