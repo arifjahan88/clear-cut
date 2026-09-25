@@ -3,7 +3,7 @@
 import * as React from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { UploadCloud, Sparkles, ShieldCheck, FileType } from "lucide-react";
+import { UploadCloud, ShieldCheck, FileType } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/components/ui/toast";

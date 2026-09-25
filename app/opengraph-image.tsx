@@ -78,18 +78,22 @@ export default function Image() {
             }}
           >
             <svg
-              width="32"
-              height="32"
+              width="34"
+              height="34"
               viewBox="0 0 24 24"
               fill="none"
               stroke="#ffffff"
-              strokeWidth="2.2"
+              strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
             >
-              <circle cx="9" cy="12" r="5" strokeDasharray="3 2" opacity="0.8" />
-              <circle cx="15" cy="12" r="5" />
-              <line x1="16" y1="8" x2="8" y2="16" stroke="#bae6fd" />
+              <circle cx="6" cy="6" r="2.8" stroke="#ffffff" strokeWidth="2" />
+              <circle cx="6" cy="18" r="2.8" stroke="#ffffff" strokeWidth="2" />
+              <path d="M8.2 8.2L19.5 19.5" stroke="#ffffff" strokeWidth="2" />
+              <path d="M8.2 15.8L12.5 11.5" stroke="#ffffff" strokeWidth="2" />
+              <path d="M14.5 9.5L19.5 4.5" stroke="#ffffff" strokeWidth="2" />
+              <circle cx="12.5" cy="11.5" r="1.4" fill="#38bdf8" />
+              <path d="M19.5 1L20.1 2.7L21.8 3.3L20.1 3.9L19.5 5.6L18.9 3.9L17.2 3.3L18.9 2.7L19.5 1Z" fill="#ffffff" />
             </svg>
           </div>
 
