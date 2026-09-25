@@ -268,6 +268,8 @@ export function UploadZone({ onImageSelected, isProcessing = false }: UploadZone
                   src={sample.src}
                   alt={sample.title}
                   fill
+                  loading="eager"
+                  priority
                   className="object-cover transition-transform duration-300 group-hover:scale-105"
                   sizes="120px"
                 />
