@@ -35,7 +35,7 @@ function AccordionTrigger({
       <AccordionPrimitive.Trigger
         data-slot="accordion-trigger"
         className={cn(
-          "group/accordion-trigger relative flex flex-1 items-center justify-between py-4 text-left text-sm sm:text-base font-semibold transition-all outline-none hover:text-indigo-600 dark:hover:text-indigo-400 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 aria-disabled:pointer-events-none aria-disabled:opacity-50 cursor-pointer select-none",
+          "group/accordion-trigger relative flex flex-1 items-center justify-between py-4 text-left text-sm sm:text-base font-semibold transition-all outline-none hover:text-blue-600 dark:hover:text-blue-400 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 aria-disabled:pointer-events-none aria-disabled:opacity-50 cursor-pointer select-none",
           className
         )}
         {...props}
@@ -43,7 +43,7 @@ function AccordionTrigger({
         <span>{children}</span>
         <ChevronDownIcon
           data-slot="accordion-trigger-icon"
-          className="pointer-events-none size-4 shrink-0 text-muted-foreground transition-transform duration-200 ease-out group-aria-expanded/accordion-trigger:rotate-180 group-aria-expanded/accordion-trigger:text-indigo-600 dark:group-aria-expanded/accordion-trigger:text-indigo-400"
+          className="pointer-events-none size-4 shrink-0 text-muted-foreground transition-transform duration-200 ease-out group-aria-expanded/accordion-trigger:rotate-180 group-aria-expanded/accordion-trigger:text-blue-600 dark:group-aria-expanded/accordion-trigger:text-blue-400"
         />
       </AccordionPrimitive.Trigger>
     </AccordionPrimitive.Header>

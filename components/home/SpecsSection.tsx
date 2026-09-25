@@ -11,7 +11,7 @@ export function SpecsSection() {
       label: "Standard Resolution",
       value: "Up to 2048 px",
       desc: "Preserves exact aspect ratio with high-fidelity bicubic smoothing.",
-      color: "text-indigo-500",
+      color: "text-blue-500",
     },
     {
       icon: FileCheck2,
@@ -40,7 +40,7 @@ export function SpecsSection() {
     <section className="w-full max-w-5xl mx-auto px-4 sm:px-6 py-16 flex flex-col gap-10">
       <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4 border-b border-border pb-6">
         <div>
-          <span className="text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
+          <span className="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">
             Performance Standards
           </span>
           <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground mt-1">

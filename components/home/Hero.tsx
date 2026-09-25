@@ -15,7 +15,7 @@ export function Hero() {
         transition={{ duration: 0.3 }}
         className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-border/80 bg-muted/60 text-xs font-medium text-foreground mb-6 shadow-2xs backdrop-blur-sm"
       >
-        <Sparkles className="w-3.5 h-3.5 text-indigo-500 animate-pulse" />
+        <Sparkles className="w-3.5 h-3.5 text-blue-500 animate-pulse" />
         <span>100% Client-Side Machine Learning • Zero Cloud Processing</span>
       </motion.div>
 
@@ -27,7 +27,7 @@ export function Hero() {
         className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-foreground max-w-3xl leading-[1.12]"
       >
         Remove backgrounds.{" "}
-        <span className="text-indigo-600 dark:text-indigo-400">
+        <span className="text-blue-600 dark:text-blue-400">
           Instantly.
         </span>{" "}
         Privately.

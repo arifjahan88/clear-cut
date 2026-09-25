@@ -15,8 +15,8 @@ export function Logo({ className }: LogoProps) {
         className
       )}
     >
-      {/* Refined Brand Icon - Vibrant Indigo/Violet Gradient that stays consistent & gorgeous in both light & dark mode */}
-      <div className="relative w-9 h-9 rounded-xl bg-linear-to-tr from-indigo-600 via-indigo-500 to-violet-500 text-white flex items-center justify-center shadow-sm shadow-indigo-500/25 transition-transform duration-200 group-hover:scale-105 shrink-0">
+      {/* Refined Brand Icon - Vibrant Blue/Cyan Gradient that stays consistent & gorgeous in both light & dark mode */}
+      <div className="relative w-9 h-9 rounded-xl bg-linear-to-tr from-blue-600 via-blue-500 to-cyan-500 text-white flex items-center justify-center shadow-sm shadow-blue-500/25 transition-transform duration-200 group-hover:scale-105 shrink-0">
         <svg
           viewBox="0 0 24 24"
           fill="none"
@@ -38,7 +38,7 @@ export function Logo({ className }: LogoProps) {
       {/* Brand Typography using semantic theme tokens (zero light/dark mismatch) */}
       <div className="flex flex-col">
         <span className="font-extrabold text-lg tracking-tight text-foreground leading-none">
-          Clear<span className="text-indigo-600 dark:text-indigo-400">Cut</span>
+          Clear<span className="text-blue-600 dark:text-blue-400">Cut</span>
         </span>
         <span className="text-[10px] font-semibold tracking-widest text-muted-foreground uppercase mt-0.5">
           Studio

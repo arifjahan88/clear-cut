@@ -179,7 +179,7 @@ export function BackgroundReplacer({
       <Card className="p-4 sm:p-6 rounded-3xl border border-border bg-card shadow-xs flex flex-col gap-5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Palette className="w-4 h-4 text-indigo-500" />
+            <Palette className="w-4 h-4 text-blue-500" />
             <h4 className="text-sm font-semibold text-foreground">
               Backdrop & Replacement
             </h4>
@@ -202,7 +202,7 @@ export function BackgroundReplacer({
             onClick={() => setBgConfig({ type: "transparent" })}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-medium transition-all cursor-pointer ${
               bgConfig.type === "transparent"
-                ? "border-indigo-500 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 font-semibold shadow-xs"
+                ? "border-blue-500 bg-blue-500/10 text-blue-600 dark:text-blue-400 font-semibold shadow-xs"
                 : "border-border hover:bg-muted text-muted-foreground"
             }`}
           >
@@ -225,7 +225,7 @@ export function BackgroundReplacer({
                 title={p.label}
                 className={`w-7 h-7 rounded-full transition-transform cursor-pointer relative flex items-center justify-center ${
                   p.border ? "border border-zinc-300 dark:border-zinc-700" : ""
-                } ${isSelected ? "ring-2 ring-indigo-500 ring-offset-2 scale-110" : "hover:scale-105"}`}
+                } ${isSelected ? "ring-2 ring-blue-500 ring-offset-2 scale-110" : "hover:scale-105"}`}
                 style={{ backgroundColor: p.color }}
               >
                 {isSelected && (
@@ -244,7 +244,7 @@ export function BackgroundReplacer({
           {/* Custom Color Input */}
           <label
             title="Custom Hex Color"
-            className="w-7 h-7 rounded-full border border-dashed border-border flex items-center justify-center cursor-pointer hover:border-indigo-500 transition-colors relative overflow-hidden"
+            className="w-7 h-7 rounded-full border border-dashed border-border flex items-center justify-center cursor-pointer hover:border-blue-500 transition-colors relative overflow-hidden"
           >
             <input
               type="color"
@@ -279,7 +279,7 @@ export function BackgroundReplacer({
                 }
                 title={g.label}
                 className={`w-7 h-7 rounded-full transition-transform cursor-pointer relative flex items-center justify-center ${
-                  isSelected ? "ring-2 ring-indigo-500 ring-offset-2 scale-110" : "hover:scale-105"
+                  isSelected ? "ring-2 ring-blue-500 ring-offset-2 scale-110" : "hover:scale-105"
                 }`}
                 style={{
                   background: `linear-gradient(135deg, ${g.gradient.from}, ${g.gradient.to})`,

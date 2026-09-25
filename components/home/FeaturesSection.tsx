@@ -23,7 +23,7 @@ const FEATURES = [
     title: "Hardware Accelerated Speed",
     description:
       "Powered by WebAssembly (WASM) and ONNX Runtime Web. Neural weights are cached locally via IndexedDB for near-instant repeat processing.",
-    iconBg: "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20",
+    iconBg: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20",
     bullets: [
       "No waiting in cloud API queues",
       "Persistent IndexedDB offline model cache",
@@ -49,7 +49,7 @@ export function FeaturesSection() {
     <section className="w-full border-t border-border/80 bg-muted/20 py-20 transition-colors">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <div className="text-center max-w-2xl mx-auto mb-14">
-          <span className="text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
+          <span className="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">
             Next-Generation Architecture
           </span>
           <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-foreground mt-2">

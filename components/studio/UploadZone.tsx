@@ -197,7 +197,7 @@ export function UploadZone({ onImageSelected, isProcessing = false }: UploadZone
         }}
         className={`w-full relative overflow-hidden cursor-pointer transition-all duration-300 border-2 border-dashed p-8 sm:p-12 text-center rounded-3xl flex flex-col items-center justify-center gap-5 group select-none ${
           isDragging
-            ? "border-indigo-500 bg-indigo-50/50 dark:bg-indigo-950/20 scale-[1.01]"
+            ? "border-blue-500 bg-blue-50/50 dark:bg-blue-950/20 scale-[1.01]"
             : "border-border hover:border-zinc-300 dark:hover:border-zinc-700 bg-card hover:bg-muted/30 shadow-xs"
         }`}
       >
@@ -205,8 +205,8 @@ export function UploadZone({ onImageSelected, isProcessing = false }: UploadZone
         <div
           className={`w-16 h-16 rounded-2xl flex items-center justify-center transition-transform duration-300 group-hover:scale-105 shadow-xs ${
             isDragging
-              ? "bg-indigo-600 text-white"
-              : "bg-secondary text-foreground group-hover:bg-indigo-600 group-hover:text-white"
+              ? "bg-blue-600 text-white"
+              : "bg-secondary text-foreground group-hover:bg-blue-600 group-hover:text-white"
           }`}
         >
           <UploadCloud className="w-8 h-8" />
@@ -216,7 +216,7 @@ export function UploadZone({ onImageSelected, isProcessing = false }: UploadZone
         <div className="flex flex-col items-center gap-1.5 max-w-md">
           <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
             Drop your image here, or{" "}
-            <span className="text-indigo-600 dark:text-indigo-400 underline-offset-4 group-hover:underline">
+            <span className="text-blue-600 dark:text-blue-400 underline-offset-4 group-hover:underline">
               browse files
             </span>
           </h3>
@@ -261,12 +261,12 @@ export function UploadZone({ onImageSelected, isProcessing = false }: UploadZone
                 handleSelectSample(sample.src, sample.title);
               }}
               disabled={isProcessing || isValidating}
-              className="flex flex-col items-center gap-1.5 p-2 rounded-xl border border-border/80 bg-card hover:bg-muted/60 transition-all hover:border-indigo-500/50 hover:shadow-xs group cursor-pointer text-left"
+              className="flex flex-col items-center gap-1.5 p-2 rounded-xl border border-border/80 bg-card hover:bg-muted/60 transition-all hover:border-blue-500/50 hover:shadow-xs group cursor-pointer text-left"
             >
               <div className="relative w-full aspect-square rounded-lg overflow-hidden bg-muted">
                 <Image
                   src={sample.src}
-                  alt={sample.title}
+                  alt={`${sample.title} - Sample test photo for AI background removal`}
                   fill
                   loading="eager"
                   priority
@@ -275,7 +275,7 @@ export function UploadZone({ onImageSelected, isProcessing = false }: UploadZone
                 />
               </div>
               <div className="flex flex-col items-center w-full">
-                <span className="text-xs font-semibold text-foreground group-hover:text-indigo-600 dark:group-hover:text-indigo-400">
+                <span className="text-xs font-semibold text-foreground group-hover:text-blue-600 dark:group-hover:text-blue-400">
                   {sample.title}
                 </span>
                 <span className="text-[10px] text-muted-foreground line-clamp-1">

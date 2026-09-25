@@ -79,12 +79,12 @@ export function ProcessingState({
 
         {/* Laser Scanner Beam */}
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute left-0 right-0 h-1 bg-linear-to-r from-indigo-500 via-sky-400 to-indigo-500 shadow-[0_0_15px_4px_rgba(99,102,241,0.6)] animate-scanline" />
+          <div className="absolute left-0 right-0 h-1 bg-linear-to-r from-blue-500 via-cyan-400 to-blue-500 shadow-[0_0_15px_4px_rgba(59,130,246,0.6)] animate-scanline" />
         </div>
 
         {/* Live Status Overlay Pill */}
         <div className="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none">
-          <Badge variant="indigo" className="bg-indigo-950/80 backdrop-blur-md text-indigo-300 border-indigo-500/40 py-1 px-3 shadow-md">
+          <Badge variant="blue" className="bg-blue-950/80 backdrop-blur-md text-blue-300 border-blue-500/40 py-1 px-3 shadow-md">
             <Loader2 className="w-3.5 h-3.5 animate-spin mr-1.5" />
             AI Processing in Browser
           </Badge>
@@ -100,10 +100,10 @@ export function ProcessingState({
       <div className="w-full flex flex-col gap-3">
         <div className="flex items-center justify-between text-sm">
           <span className="font-semibold text-foreground flex items-center gap-2">
-            <Loader2 className="w-4 h-4 animate-spin text-indigo-500" />
+            <Loader2 className="w-4 h-4 animate-spin text-blue-500" />
             {progress.message || "Analyzing image..."}
           </span>
-          <span className="font-mono font-bold text-indigo-600 dark:text-indigo-400">
+          <span className="font-mono font-bold text-blue-600 dark:text-blue-400">
             {Math.round(progress.percentage)}%
           </span>
         </div>
@@ -126,7 +126,7 @@ export function ProcessingState({
               key={step.id}
               className={`flex flex-col items-center text-center p-2.5 rounded-xl border transition-all ${
                 step.isActive
-                  ? "border-indigo-500/40 bg-indigo-500/5 text-indigo-600 dark:text-indigo-400 shadow-xs"
+                  ? "border-blue-500/40 bg-blue-500/5 text-blue-600 dark:text-blue-400 shadow-xs"
                   : step.isDone
                   ? "border-emerald-500/30 bg-emerald-500/5 text-emerald-600 dark:text-emerald-400"
                   : "border-border/60 bg-muted/30 text-muted-foreground opacity-60"
@@ -134,7 +134,7 @@ export function ProcessingState({
             >
               <div className="flex items-center justify-center w-7 h-7 rounded-full mb-1.5 bg-background shadow-xs">
                 {step.isActive ? (
-                  <Loader2 className="w-4 h-4 animate-spin text-indigo-500" />
+                  <Loader2 className="w-4 h-4 animate-spin text-blue-500" />
                 ) : (
                   <Icon className="w-4 h-4" />
                 )}

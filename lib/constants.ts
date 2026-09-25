@@ -47,7 +47,7 @@ export const COLOR_PRESETS = [
   { id: "sky", label: "Sky Blue", color: "#38bdf8" },
   { id: "emerald", label: "Sage Green", color: "#10b981" },
   { id: "rose", label: "Pastel Rose", color: "#fb7185" },
-  { id: "indigo", label: "Electric Indigo", color: "#6366f1" },
+  { id: "electric-blue", label: "Electric Blue", color: "#2563eb" },
 ];
 
 // Modern gradient backdrops
