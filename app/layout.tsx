@@ -5,6 +5,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { ToastProvider } from "@/components/ui/toast";
 import { cn } from "@/lib/utils";
+import { Analytics } from "@vercel/analytics/next";
 
 const fontSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -116,6 +117,7 @@ export default function RootLayout({
       suppressHydrationWarning
       className={cn("h-full", "antialiased", fontSans.variable, fontMono.variable, "font-sans")}
     >
+      <Analytics/>
       <body className="min-h-full flex flex-col bg-background text-foreground selection:bg-blue-500/20 selection:text-blue-600 dark:selection:text-blue-400">
         <ThemeProvider
           attribute="class"
