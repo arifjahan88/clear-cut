@@ -8,7 +8,7 @@ export default function robots(): MetadataRoute.Robots {
         allow: "/",
       },
     ],
-    sitemap: "https://clearcut.studio/sitemap.xml",
-    host: "https://clearcut.studio",
+    sitemap: "https://clear-cut.arifjahan.com/sitemap.xml",
+    host: "https://clear-cut.arifjahan.com",
   };
 }

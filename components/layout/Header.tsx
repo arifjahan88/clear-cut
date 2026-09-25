@@ -20,7 +20,7 @@ export function Header() {
           </Badge>
 
           <a
-            href="https://github.com"
+            href="https://github.com/arifjahan88/clear-cut"
             target="_blank"
             rel="noreferrer"
             className="inline-flex items-center justify-center w-9 h-9 rounded-lg border border-border/60 hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"

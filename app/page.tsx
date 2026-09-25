@@ -13,11 +13,11 @@ export default function Home() {
     "@graph": [
       {
         "@type": "WebApplication",
-        "@id": "https://clearcut.studio/#app",
+        "@id": "https://clear-cut.arifjahan.com/#app",
         name: "ClearCut Studio",
-        url: "https://clearcut.studio",
+        url: "https://clear-cut.arifjahan.com",
         description:
-          "Free, 100% in-browser AI background remover with zero server uploads. High-resolution transparent PNG exports with client-side WebAssembly and ONNX neural models.",
+          "Free, 100% in-browser AI background remover with zero server uploads. Multi-format PNG, WebP, JPEG, and AVIF exports with client-side WebAssembly and ONNX neural models.",
         applicationCategory: "DesignApplication",
         operatingSystem: "All (Modern Web Browsers: Chrome, Firefox, Safari, Edge)",
         browserRequirements: "Requires WebAssembly (WASM) and WebGL support",
@@ -31,26 +31,27 @@ export default function Home() {
           "WebAssembly (WASM) and ONNX Neural Network Inference",
           "Interactive Split Before/After Slider",
           "Solid Color, Gradient & Custom Photo Backdrop Replacement",
+          "Multi-Format Export: PNG, WebP, JPEG, AVIF with Live Download Size Preview",
           "Direct Copy-to-Clipboard for Figma, Canva, and Photoshop",
           "Drag-and-Drop and System Clipboard (Ctrl+V / Cmd+V) Paste",
-          "High-Resolution PNG Transparent Export",
+          "Image Preview with Start Trigger",
         ],
       },
       {
         "@type": "WebSite",
-        "@id": "https://clearcut.studio/#website",
-        url: "https://clearcut.studio",
+        "@id": "https://clear-cut.arifjahan.com/#website",
+        url: "https://clear-cut.arifjahan.com",
         name: "ClearCut Studio",
         description: "100% Private In-Browser AI Background Remover",
         publisher: {
           "@type": "Organization",
           name: "ClearCut Studio",
-          url: "https://clearcut.studio",
+          url: "https://clear-cut.arifjahan.com",
         },
       },
       {
         "@type": "FAQPage",
-        "@id": "https://clearcut.studio/#faq",
+        "@id": "https://clear-cut.arifjahan.com/#faq",
         mainEntity: FAQ_ITEMS.map((item) => ({
           "@type": "Question",
           name: item.question,

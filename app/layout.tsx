@@ -31,7 +31,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://clearcut.studio"),
+  metadataBase: new URL("https://clear-cut.arifjahan.com"),
   title: {
     default: "ClearCut Studio — Free In-Browser AI Background Remover | 100% Private",
     template: "%s | ClearCut Studio",
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
   description:
     "Remove image backgrounds instantly in your browser with zero server uploads. Powered by client-side WebAssembly & ONNX neural models. 100% private, free, and unlimited high-resolution exports.",
   applicationName: "ClearCut Studio",
-  authors: [{ name: "ClearCut Studio", url: "https://clearcut.studio" }],
+  authors: [{ name: "ClearCut Studio", url: "https://clear-cut.arifjahan.com" }],
   generator: "Next.js",
   keywords: [
     "background remover",
@@ -64,22 +64,31 @@ export const metadata: Metadata = {
     telephone: false,
   },
   alternates: {
-    canonical: "/",
+    canonical: "https://clear-cut.arifjahan.com",
   },
   openGraph: {
     title: "ClearCut Studio — Free In-Browser AI Background Remover",
     description:
       "Remove image backgrounds instantly in your browser with zero server uploads. 100% private, client-side AI. Free, unlimited, full-resolution exports.",
-    url: "https://clearcut.studio",
+    url: "https://clear-cut.arifjahan.com",
     siteName: "ClearCut Studio",
     locale: "en_US",
     type: "website",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "ClearCut Studio — Free In-Browser AI Background Remover",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "ClearCut Studio — Free In-Browser AI Background Remover",
     description:
       "Remove image backgrounds instantly in your browser with zero server uploads. 100% private, client-side AI.",
+    images: ["/og-image.png"],
     creator: "@clearcutstudio",
   },
   robots: {
