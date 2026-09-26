@@ -29,7 +29,7 @@
     <a href="https://webassembly.org/"><img src="https://img.shields.io/badge/WebAssembly-WASM_SIMD-654FF0?style=for-the-badge&logo=webassembly&logoColor=white" alt="WebAssembly" /></a>
     <a href="https://onnxruntime.ai/"><img src="https://img.shields.io/badge/ONNX_Runtime-Web-005CED?style=for-the-badge&logoColor=white" alt="ONNX Runtime" /></a>
     <img src="https://img.shields.io/badge/Privacy-100%25_Client--Side-10B981?style=for-the-badge&logo=shield&logoColor=white" alt="100% Client-Side" />
-    <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-F59E0B?style=for-the-badge" alt="MIT License" /></a>
+    <a href="LICENSE"><img src="https://img.shields.io/badge/License-AGPL_3.0-2563EB?style=for-the-badge&logo=gnu" alt="AGPL-3.0 License" /></a>
   </p>
 
   <br />
@@ -85,7 +85,7 @@ Traditional background removal services send your confidential photos, documents
 - Export in multiple formats with clean auto-naming and compression presets.
 
 ### 💾 6. IndexedDB Neural Model Caching
-- Neural weights (~40 MB) are retrieved once and cached locally in your browser's IndexedDB.
+- Neural weights are retrieved once and cached locally in your browser's IndexedDB.
 - All subsequent runs execute without re-downloading model weights, even when disconnected from the internet.
 
 ---
@@ -121,7 +121,7 @@ flowchart TD
     A[User Image: Drag & Drop / Paste / File Picker] --> B[Client-Side Validation & Dimension Normalization]
     B --> C{IndexedDB Model Cache}
     C -- Cached --> D[Load Model from Local IndexedDB]
-    C -- Not Cached --> E[Chunked Weight Download ~40MB]
+    C -- Not Cached --> E[Chunked Weight Download]
     E --> F[Persist to IndexedDB]
     F --> D
     D --> G[WebAssembly SIMD / ONNX Runtime Web Engine]
@@ -146,7 +146,7 @@ flowchart TD
 - **UI Library**: [React 19](https://react.dev/)
 - **Styling**: [Tailwind CSS v4](https://tailwindcss.com/)
 - **Components**: [Base UI](https://base-ui.com/) & [shadcn/ui](https://ui.shadcn.com/)
-- **In-Browser ML**: [@imgly/background-removal](https://github.com/imgly/background-removal-js) (ISNet via ONNX Web)
+- **In-Browser ML**: [@imgly/background-removal](https://github.com/imgly/background-removal-js) (ISNet ONNX Web, AGPL-3.0)
 - **Animation**: [Framer Motion](https://www.framer.com/motion/)
 - **Icons**: [Lucide React](https://lucide.dev/)
 - **Typography**: [Plus Jakarta Sans](https://fonts.google.com/specimen/Plus+Jakarta+Sans) & [JetBrains Mono](https://fonts.google.com/specimen/JetBrains+Mono)
@@ -250,9 +250,19 @@ ClearCut Studio is optimized for modern web browsers equipped with WebAssembly S
 
 ---
 
-## 📄 License
+## 📄 License & AGPL-3.0 Open Source Compliance
 
-Distributed under the [MIT License](LICENSE).
+ClearCut Studio is free and open-source software distributed under the **[GNU Affero General Public License v3.0 (AGPL-3.0)](LICENSE)**.
+
+### 🌐 Open Source & Source Code Availability
+In compliance with **Section 13 (Remote Network Interaction)** of the AGPL-3.0:
+- The complete corresponding source code for this web application is freely and publicly accessible at [https://github.com/arifjahan88/clear-cut](https://github.com/arifjahan88/clear-cut).
+- Anyone has the freedom to inspect, review, modify, fork, or self-host their own instance under the reciprocal terms of the AGPL-3.0.
+
+### 🧠 Upstream ML Library & Commercial Deployments
+In-browser neural segmentation is powered by [@imgly/background-removal](https://github.com/imgly/background-removal-js), created by [IMG.LY GmbH](https://img.ly).
+- Under the AGPL-3.0 license, using `@imgly/background-removal` in public web applications requires keeping the entire application open source under AGPL-3.0 and providing source code access to network users.
+- **Commercial Closed-Source Use**: If you wish to integrate this in-browser background removal engine into a proprietary, commercial, or closed-source application without open-sourcing your codebase under AGPL-3.0, you must obtain a commercial license directly from [IMG.LY GmbH](https://img.ly/company/contact) ([support@img.ly](mailto:support@img.ly)).
 
 <div align="center">
   <sub>Built with ❤️ for privacy-first, client-side creative tools.</sub>

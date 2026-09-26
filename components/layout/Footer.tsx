@@ -27,10 +27,35 @@ export function Footer() {
         </div>
 
         <div className="border-t border-border/60 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-muted-foreground/80">
-          <p>© {new Date().getFullYear()} ClearCut Studio. All rights reserved.</p>
-          <p>
-            ML inference powered locally under the AGPL-3.0 license. Free for open-source & personal use.
-          </p>
+          <p>© {new Date().getFullYear()} ClearCut Studio. Free and open source under GNU AGPLv3.</p>
+          <div className="flex flex-wrap items-center gap-3">
+            <a
+              href="https://github.com/arifjahan88/clear-cut"
+              target="_blank"
+              rel="noreferrer"
+              className="hover:text-foreground underline underline-offset-2 transition-colors"
+            >
+              Source Code (GitHub)
+            </a>
+            <span>•</span>
+            <a
+              href="https://github.com/arifjahan88/clear-cut/blob/main/LICENSE"
+              target="_blank"
+              rel="noreferrer"
+              className="hover:text-foreground underline underline-offset-2 transition-colors"
+            >
+              AGPL-3.0 License
+            </a>
+            <span>•</span>
+            <a
+              href="https://img.ly/company/contact"
+              target="_blank"
+              rel="noreferrer"
+              className="hover:text-foreground underline underline-offset-2 transition-colors"
+            >
+              Commercial License (IMG.LY)
+            </a>
+          </div>
         </div>
       </div>
     </footer>

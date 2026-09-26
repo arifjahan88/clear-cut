@@ -154,7 +154,7 @@ export const FAQ_ITEMS = [
     id: "faq-3",
     question: "Why does the first image take a few seconds?",
     answer:
-      "On the initial run, the browser retrieves the neural network model (~40 MB) and initializes the WASM engine. The model is immediately cached locally in your browser's IndexedDB storage, making every subsequent background removal nearly instantaneous.",
+      "On the initial run, the browser retrieves the neural network model and initializes the WebAssembly engine. The weights are immediately cached locally in your browser's IndexedDB storage, making every subsequent background removal nearly instantaneous.",
   },
   {
     id: "faq-4",
@@ -167,6 +167,12 @@ export const FAQ_ITEMS = [
     question: "Are there any usage limits, watermarks, or subscriptions?",
     answer:
       "None. ClearCut is completely free to use directly in your browser with zero watermarks, zero subscriptions, and multi-format exports in PNG, WEBP, JPEG, and AVIF.",
+  },
+  {
+    id: "faq-6",
+    question: "What license is ClearCut Studio under?",
+    answer:
+      "ClearCut Studio is free and open source under the GNU Affero General Public License v3.0 (AGPL-3.0). The full source code is publicly accessible on GitHub. In-browser neural segmentation is powered by @imgly/background-removal. Closed-source commercial products looking to embed the engine require a commercial license from IMG.LY.",
   },
 ];
 
