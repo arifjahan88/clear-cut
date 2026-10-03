@@ -1,6 +1,13 @@
 "use client";
 
-import * as React from "react";
+import {
+  ChangeEvent,
+  DragEvent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { UploadCloud, ShieldCheck, FileType } from "lucide-react";
@@ -23,12 +30,12 @@ interface UploadZoneProps {
 }
 
 export function UploadZone({ onImageSelected, isProcessing = false }: UploadZoneProps) {
-  const [isDragging, setIsDragging] = React.useState(false);
-  const [isValidating, setIsValidating] = React.useState(false);
-  const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [isValidating, setIsValidating] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
-  const handleProcessFile = React.useCallback(
+  const handleProcessFile = useCallback(
     async (file: File | Blob) => {
       // 1. Validate file format and size (< 5MB)
       const validation = validateImageFile(file);
@@ -80,20 +87,20 @@ export function UploadZone({ onImageSelected, isProcessing = false }: UploadZone
   );
 
   // Drag and drop event handlers
-  const handleDragOver = React.useCallback((e: React.DragEvent) => {
+  const handleDragOver = useCallback((e: DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(true);
   }, []);
 
-  const handleDragLeave = React.useCallback((e: React.DragEvent) => {
+  const handleDragLeave = useCallback((e: DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(false);
   }, []);
 
-  const handleDrop = React.useCallback(
-    (e: React.DragEvent) => {
+  const handleDrop = useCallback(
+    (e: DragEvent) => {
       e.preventDefault();
       e.stopPropagation();
       setIsDragging(false);
@@ -106,8 +113,8 @@ export function UploadZone({ onImageSelected, isProcessing = false }: UploadZone
     [handleProcessFile]
   );
 
-  const handleFileInputChange = React.useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileInputChange = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
       if (e.target.files && e.target.files.length > 0) {
         const file = e.target.files[0];
         handleProcessFile(file);
@@ -120,7 +127,7 @@ export function UploadZone({ onImageSelected, isProcessing = false }: UploadZone
   );
 
   // Global Clipboard Paste (Ctrl+V / Cmd+V)
-  React.useEffect(() => {
+  useEffect(() => {
     const handlePaste = (e: ClipboardEvent) => {
       if (isProcessing) return;
 

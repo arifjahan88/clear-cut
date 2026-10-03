@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useToast } from "@/components/ui/toast";
 import { UploadZone } from "@/components/studio/UploadZone";
@@ -26,21 +26,21 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 
 export function BackgroundRemover() {
-  const [selectedImage, setSelectedImage] = React.useState<OptimizedImageResult | null>(null);
-  const [processedBlob, setProcessedBlob] = React.useState<Blob | null>(null);
-  const [processedUrl, setProcessedUrl] = React.useState<string | null>(null);
-  const [isProcessing, setIsProcessing] = React.useState(false);
-  const [showPrivacyInfo, setShowPrivacyInfo] = React.useState(false);
-  const [progress, setProgress] = React.useState<ProcessingProgress>({
+  const [selectedImage, setSelectedImage] = useState<OptimizedImageResult | null>(null);
+  const [processedBlob, setProcessedBlob] = useState<Blob | null>(null);
+  const [processedUrl, setProcessedUrl] = useState<string | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [showPrivacyInfo, setShowPrivacyInfo] = useState(false);
+  const [progress, setProgress] = useState<ProcessingProgress>({
     stage: "init",
     percentage: 0,
     message: "Initializing engine...",
   });
 
-  const abortControllerRef = React.useRef<boolean>(false);
+  const abortControllerRef = useRef<boolean>(false);
   const { toast } = useToast();
 
-  const handleImageSelected = React.useCallback(
+  const handleImageSelected = useCallback(
     (optimizedResult: OptimizedImageResult) => {
       setSelectedImage(optimizedResult);
       setProcessedBlob(null);
@@ -50,7 +50,7 @@ export function BackgroundRemover() {
     []
   );
 
-  const handleStartProcessing = React.useCallback(async () => {
+  const handleStartProcessing = useCallback(async () => {
     if (!selectedImage) return;
     setProcessedBlob(null);
     setProcessedUrl(null);
@@ -177,7 +177,7 @@ export function BackgroundRemover() {
   }, [selectedImage, toast]);
 
   // Press Enter key while viewing ready image to start
-  React.useEffect(() => {
+  useEffect(() => {
     if (!selectedImage || isProcessing || processedBlob) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -191,7 +191,7 @@ export function BackgroundRemover() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [selectedImage, isProcessing, processedBlob, handleStartProcessing]);
 
-  const handleReset = React.useCallback(() => {
+  const handleReset = useCallback(() => {
     abortControllerRef.current = true;
     if (processedUrl) {
       URL.revokeObjectURL(processedUrl);

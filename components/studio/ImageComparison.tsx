@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from "react";
+import { PointerEvent, useCallback, useRef, useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { SlidersHorizontal, Columns2, Eye } from "lucide-react";
@@ -20,12 +20,12 @@ export function ImageComparison({
   width,
   height,
 }: ImageComparisonProps) {
-  const [viewMode, setViewMode] = React.useState<"slider" | "side" | "result">("slider");
-  const [sliderPosition, setSliderPosition] = React.useState(50);
-  const [isDragging, setIsDragging] = React.useState(false);
-  const containerRef = React.useRef<HTMLDivElement>(null);
+  const [viewMode, setViewMode] = useState<"slider" | "side" | "result">("slider");
+  const [sliderPosition, setSliderPosition] = useState(50);
+  const [isDragging, setIsDragging] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  const handleMove = React.useCallback(
+  const handleMove = useCallback(
     (clientX: number) => {
       if (!containerRef.current) return;
       const rect = containerRef.current.getBoundingClientRect();
@@ -36,8 +36,8 @@ export function ImageComparison({
     []
   );
 
-  const handlePointerDown = React.useCallback(
-    (e: React.PointerEvent) => {
+  const handlePointerDown = useCallback(
+    (e: PointerEvent) => {
       setIsDragging(true);
       (e.target as HTMLElement).setPointerCapture(e.pointerId);
       handleMove(e.clientX);
@@ -45,16 +45,16 @@ export function ImageComparison({
     [handleMove]
   );
 
-  const handlePointerMove = React.useCallback(
-    (e: React.PointerEvent) => {
+  const handlePointerMove = useCallback(
+    (e: PointerEvent) => {
       if (!isDragging) return;
       handleMove(e.clientX);
     },
     [isDragging, handleMove]
   );
 
-  const handlePointerUp = React.useCallback(
-    (e: React.PointerEvent) => {
+  const handlePointerUp = useCallback(
+    (e: PointerEvent) => {
       if (isDragging) {
         setIsDragging(false);
         try {
